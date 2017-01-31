@@ -7,12 +7,12 @@ function bmap =edgeGradient(im)
 
 % Find the gradiant magnitude and orientation
 sig = 2;
-[magnitude, orientation] = gradiantMagnitude(image, sig);
+[magnitude, orientation] = gradientMagnitude(im, sig);
 
 % Non-max suppression
 NMaxSuppressionMagnitude = nonmax(magnitude, orientation);
 
 
-bamp = NMaxSuppressionMagnitude.^(0.7);
+bmap = NMaxSuppressionMagnitude.^(0.7);
 
 end

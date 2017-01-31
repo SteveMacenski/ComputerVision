@@ -11,21 +11,21 @@ blurred_im = imfilter(im, G);
 %find gradiants of the blurred image
 x_grad = double(imfilter(blurred_im, [1, 0, -1]));
 y_grad = double(imfilter(blurred_im, [1, 0, -1]));
-gradiant = sqrt(x_grad.^2 + y_grad.^2);
+grad = sqrt(x_grad.^2 + y_grad.^2);
 
 
 %find magnitude of the gradients
-mag = sqrt(gradiant(:,:,1).^2 + ... %R
-           gradiant(:,:,2).^2 + ... %G
-           gradiant(:,:,3).^2);     %B
+mag = sqrt(grad(:,:,1).^2 + ... %R
+           grad(:,:,2).^2 + ... %G
+           grad(:,:,3).^2);     %B
 
 %find orientation of the gradiants
-ProjXthetas = x_grad ./ gradient;
-ProjYthetas = y_grad ./ gradient;
+ProjXthetas = x_grad ./ grad;
+ProjYthetas = y_grad ./ grad;
 
 orientations = atan2(ProjXthetas, ProjYthetas);
 
-horSize = size(thetas,1); vertSize = size(thetas,2);
+horSize = size(im,1); vertSize = size(im,2);
 theta = zeros(horSize, vertSize);
 
 for i = 1:size(horSize)
