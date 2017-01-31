@@ -13,3 +13,4 @@ plot_pyramids(gaussian, laplacian, 2, 5);
 
 %fft funct
 plot_ffts(gaussian, laplacian, 2, 5);
+        
