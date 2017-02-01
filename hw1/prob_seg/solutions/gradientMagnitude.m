@@ -13,7 +13,6 @@ x_grad = double(imfilter(blurred_im, [1, 0, -1]));
 y_grad = double(imfilter(blurred_im, [1, 0, -1]));
 grad = sqrt(x_grad.^2 + y_grad.^2);
 
-
 %find magnitude of the gradients
 mag = sqrt(grad(:,:,1).^2 + ... %R
            grad(:,:,2).^2 + ... %G
