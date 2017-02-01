@@ -2,23 +2,28 @@ function [ mag, theta ] = orientedFilterMagnitude( im )
 % Implementation of an oriented filter with at least 4 orientations
 %   Steve Macenski 2017
 
-    %
+    %define filters
     filters = makeLMfilters;
     num_filters = 18;
     
-    for i = 1:num_filters  %6 directions, 3 scales, LM, to truncate old other filters
+    %show filters and get filters of input image
+    for i = 1:num_filters;  %6 directions, 3 scales, LM, to truncate old other filters
         filtered_im(:,:,i)=imfilter(im,filters(:,:,i),'conv');
-        %visualize with imagesc(responses(:,:,1-48))
-        %imagesc(filtered_im(:,:,i))
-        %pause
+            %visualize with imagesc(responses(:,:,1-48))
+            %imagesc(filtered_im(:,:,i))
+            %pause
+        
+        %TODO check if normalization is required?
     end
 
+    % size the magnitude and populate
     horSize = size(im,1);
     vertSize = size(im,2);
-    mag = zeros(horSize, vertSize, num_filters);
-    for i = 1:size(horSize)
-        for j = 1:size(vertSize)
-           for k = 1:num_filters
+    mag = zeros(horSize, vertSize);
+    
+    for i = 1:size(horSize);
+        for j = 1:size(vertSize);
+           for k = 1:num_filters;
                if filtered_im(i,j,k) > mag(i,j)
                    mag(i,j) = filtered_im(i,j,k);
                end
@@ -26,7 +31,30 @@ function [ mag, theta ] = orientedFilterMagnitude( im )
         end
     end
     
-    
+    % Find orientation of max channel
+    theta = zeros(horSize, vertSize);
+
+    orientations_of_filters = 0:pi);
+    orientations_of_filters = linspace(0,pi,6);
+
+    for i = 1:size(horSize);
+        for j = 1:size(vertSize);
+           for k = 1:num_filters;
+               if filtered_im(i,j,k) == mag(i,j)
+                   
+                   %compute the angle TODO
+                   if k == 1 || k == 
+                       theta(i,j) = 
+                   elseif k>6 && k<=12
+                       theta(i,j) = 
+                   elseif k>12
+                       theta(i,j) = 
+                   end
+                   
+               end
+           end
+        end
+    end
     
 end
 

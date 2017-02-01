@@ -30,7 +30,8 @@ theta = zeros(horSize, vertSize);
 for i = 1:size(horSize)
     for j = 1:size(vertSize)
         for k = 1:3
-            if theta(i,j) < orientations(i,j,k)
+            %if theta(i,j) < orientations(i,j,k) %TODO check this is right
+            if mag(i,j,k) < max(mag(i,j,1:3)) %TODO check this is right
                 theta(i,j) = orientations(i,j,k);
             end
         end
