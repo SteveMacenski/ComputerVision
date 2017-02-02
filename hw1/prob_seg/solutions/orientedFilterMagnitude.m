@@ -9,10 +9,8 @@ function [ mag, theta ] = orientedFilterMagnitude( im )
 
     %get filters of input image
     for i = 1:num_filters;  %6 directions, 1 scale -> LM
-        currentFilter = filters(:,:,i);
+        currentFilter = filters(:,:,i+num_filters*2);
         filtered_im(:,:,i)=imfilter(im,currentFilter,'conv');
-        
-        %TODO check if normalization is required?
     end
 
     % size the magnitude and populate

@@ -6,10 +6,9 @@ function bmap = edgeOrientedFilters( im )
 % call oriented filter mag function
 [magnitude, orientation] = orientedFilterMagnitude(im);
 
-% perform non-maximum suppression, same as in edgeGradient
-%NMaxSuppressionMagnitude = nonmax(magnitude, orientation);
-canny_edge = edge(rgb2gray(im), 'prewitt');
-magnitude = magnitude .* (canny_edge > 0);
+% perform non-maximum suppression, this time with Prewitt
+prewitt = edge(rgb2gray(im), 'prewitt');
+magnitude = magnitude.*(prewitt > 0);
 
 bmap = abs(magnitude);
 bmap = bmap / max(max(bmap));
