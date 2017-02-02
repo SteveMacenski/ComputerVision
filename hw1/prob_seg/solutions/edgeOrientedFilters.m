@@ -9,6 +9,6 @@ function bmap = edgeOrientedFilters( im )
 % perform non-maximum suppression, same as in edgeGradient
 NMaxSuppressionMagnitude = nonmax(magnitude, orientation);
 
-bmap = NMaxSuppressionMagnitude.^(0.7);
+bmap = abs(NMaxSuppressionMagnitude.^(0.7));
 end
 

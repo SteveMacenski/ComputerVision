@@ -22,7 +22,7 @@ mag = sqrt(grad(:,:,1).^2 + ... %R
 ProjXthetas = x_grad ./ grad;
 ProjYthetas = y_grad ./ grad;
 
-orientations = atan2(ProjXthetas, ProjYthetas);
+orientations = atan2(-ProjYthetas, ProjXthetas); %TODO check order
 
 horSize = size(im,1); vertSize = size(im,2);
 theta = zeros(horSize, vertSize);
@@ -30,8 +30,7 @@ theta = zeros(horSize, vertSize);
 for i = 1:size(horSize)
     for j = 1:size(vertSize)
         for k = 1:3
-            %if theta(i,j) < orientations(i,j,k) %TODO check this is right
-            if mag(i,j,k) < max(mag(i,j,1:3)) %TODO check this is right
+            if grad(i,j,k) == max(grad(i,j,:)) %TODO check this is right
                 theta(i,j) = orientations(i,j,k);
             end
         end
