@@ -8,7 +8,7 @@ gray_src = mat2gray(src);
 
 %config filter, reducation_factor is sigma, hsize?
 gaussian{num_levels,1} = [];
-laplacian{num_levels-1,1} = [];
+laplacian{num_levels,1} = [];
 gaussian{1} = gray_src;
 h = fspecial('gaussian', 9, reduction_factor);
 
@@ -25,7 +25,7 @@ for i = 2:num_levels
                    size(gaussian{i-1}, 2)/2]); 
     
 end
-
+laplacian{end} = gaussian{end};
 
 end
 
