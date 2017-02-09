@@ -4,7 +4,7 @@ function [ gaussian, laplacian ] = gaussian_and_laplacian_pyramid( src, num_leve
 
 % read in images and gray scale
 src = imread(src);
-gray_src = mat2gray(src);
+gray_src = double(rgb2gray(src));
 
 %config filter, reducation_factor is sigma, hsize?
 gaussian{num_levels,1} = [];
