@@ -8,7 +8,7 @@ function bmap = edgeOrientedFilters( im )
 
 % perform non-maximum suppression, this time with Prewitt
 prewitt = edge(rgb2gray(im), 'prewitt');
-magnitude = magnitude.*(prewitt > 0);
+magnitude = magnitude.*prewitt;
 
 bmap = abs(magnitude);
 bmap = bmap / max(max(bmap));

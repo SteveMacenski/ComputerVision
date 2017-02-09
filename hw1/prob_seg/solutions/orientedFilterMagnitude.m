@@ -41,7 +41,6 @@ function [ mag, theta ] = orientedFilterMagnitude( im )
         for j = 1:vertSize;
            for k = 1:num_filters;
                if k == magFilter(i,j);
-                   
                    if k == 1 || k == 7 || k ==13 
                        theta(i,j) = orientations_of_filters(1);
                    elseif k == 2 || k == 8 || k ==14 

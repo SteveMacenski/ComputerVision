@@ -10,8 +10,7 @@ sig = 2;
 [magnitude, orientation] = gradientMagnitude(im, sig);
 
 % Non-max suppression
-NMaxSuppressionMagnitude = nonmax(magnitude, orientation);
-
+NMaxSuppressionMagnitude = magnitude.*edge(rgb2gray(im), 'canny');
 
 bmap = NMaxSuppressionMagnitude.^(0.7);
 
