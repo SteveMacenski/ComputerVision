@@ -4,7 +4,7 @@
 %Steven Macenski 2017
 
 clear all;
-src = './Lenna.png';
+src = './hrs_atlas2.png';
 
 % 5 levels and reduction of 2 as specified by the prompt
 [gaussian, laplacian] = gaussian_and_laplacian_pyramid(src, 5, 2);
