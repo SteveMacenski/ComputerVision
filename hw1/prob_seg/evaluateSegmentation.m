@@ -12,7 +12,7 @@ addpath('./solutions'); % change to your solutions directory
 makehtml = true; % optional, for creating html pages for results
 overwrite = true; % set to false if you want to skip already processed images
 
-methods = {'gradient', 'oriented'};
+methods = {'gradient'};%, 'oriented'};
 
 for m = 1:numel(methods) % choose which methods to run
   

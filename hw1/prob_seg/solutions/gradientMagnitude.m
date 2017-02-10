@@ -10,7 +10,7 @@ blurred_im = imfilter(im, G);
 
 %find gradiants of the blurred image
 x_grad = double(imfilter(blurred_im, [1, 0, -1]));
-y_grad = double(imfilter(blurred_im, [1, 0, -1]));
+y_grad = double(imfilter(blurred_im, [1, 0, -1]'));
 grad = sqrt(x_grad.^2 + y_grad.^2);
 
 %find magnitude of the gradients
