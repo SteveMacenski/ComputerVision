@@ -25,19 +25,24 @@ Ixy = imfilter(Ixy,G);
 SMM = [Ixx, Ixy;
        Ixy, Iyy];   
    
-%k in range [0.04:0.06]
+%k in range [0.04:0.06], picked middle and tuned tau
 k = 0.05;
 
 %meets criteria, then it can be a marker
-    %   det SMM               trace SMM
+    %             det SMM               trace SMM
 im_criteria = Ixx.*Iyy-Ixy.*Ixy   -   k*(Ixx + Iyy).^2;
-harris_criteria = (  im_criteria   >   tau  );
+harris_criteria = (  im_criteria   >   tau  ); %sp. pixel meets requirement
 
-%Local non-maxima suppression TODO
+%Local non-maxima suppression
 window_size = 5;
-suppression = ordfilt2( harris_criteria,   (2*window_size+1)^2,   ones(2*window_size+1) );
-suppression = ~suppression;
+mask = ordfilt2( im_criteria,   (2*window_size+1)^2,   ones(2*window_size+1) ); %finds max in 5x5 window from haris cornerness fn
+
+% when meeting Harris fn criteria AND is the maximum of a 5x5 window
+% filtered from cornernes fn, pixel by pixel bool comparison
+suppression = (im_criteria==mask)&(harris_criteria);
+
 [keyYs, keyXs] = find(suppression);
+
 
 end
 
