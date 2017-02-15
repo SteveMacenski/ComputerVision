@@ -4,25 +4,24 @@ function [ newX, newY ] = predictTranslation( startX, startY, Ix, Iy, im0, im1 )
 
 %   Steve Macenski (c) 2017
 
-  % find local window Ix, Iy, It for current point
-  [localx, localy] = meshgrid(startX-15:startX+15, startY-15:startY+15);
-  localIx = interp2(Ix, localX, localY, 'spline'); %try linear
-  localIy = interp2(Iy, localX, localY, 'spline'); %try linear
-  localIt = %TODO
+  % find local 15x15 window It for current point
+  [localX, localY] = meshgrid(startX-7:startX+7, startY-7:startY+7);
+  It = interp2(im1,localX, localY, 'linear') - ...
+            interp2(im0,localX, localY, 'linear');
 
   % find sums to populate A and b matrices
-  sumIx = %TODO sum over windows
-  sumIy = 
-  sumIxy = 
-  sumIxt = 
-  sumIyt = 
+  sumIx = sum(sum(Ix.*Ix));
+  sumIy = sum(sum(Iy.*Iy));
+  sumIxy = sum(sum(Ix.*Iy));
+  sumIxt = sum(sum(Ix.*It));
+  sumIyt = sum(sum(Iy.*It));
   
   % solve system of equations
   A = [sumIx, sumIxy;
        sumIxy, sumIy];
-  b = [-Ixt; -Iyt];
+  b = [-sumIxt; -sumIyt];
   x = A\b;
-  x(1) = u; x(2) = v;
+  u = x(1); v = x(2);
   
   %update guess
   newX = startX + u;
