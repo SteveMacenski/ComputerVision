@@ -49,16 +49,16 @@ for j = 1:num_im
 end
 
                         %     % display ALL results for visualization
-                        % figure(2)
-                        % imshow(im);
-                        % hold on;
-                        % plot(trackingXs,trackingYs, 'g.', 'linewidth',3);
-                        % title('Steve Macenski Kanade-Lucas-Tomasi Tracker 1.2')
-                        % 
-                        % points_out_of_boundsX = [];
-                        % points_out_of_boundsY = [];
-                        % points_in_boundX = [];
-                        % points_in_boundY = [];
+%                         figure(2)
+%                         imshow(im);
+%                         hold on;
+%                         plot(trackingXs,trackingYs, 'g.', 'linewidth',3);
+%                         title('Steve Macenski Kanade-Lucas-Tomasi Tracker 1.2')
+%                         
+%                         points_out_of_boundsX = [];
+%                         points_out_of_boundsY = [];
+%                         points_in_boundX = [];
+%                         points_in_boundY = [];
 
 %find what points are in and out of bounds
 n=1;m=1;
@@ -78,9 +78,9 @@ end
 % find 20 evenly distributed points to track that were in bounds
 step_size = length(points_in_boundX)/20;
 step_size = floor(step_size);
-for i = 1:step_size
-    points_in_bound_plotX(i,:) = points_in_boundX(i*20,:);
-    points_in_bound_plotY(i,:) = points_in_boundY(i*20,:);
+for i = 1:20
+    points_in_bound_plotX(i,:) = points_in_boundX(step_size*i,:);
+    points_in_bound_plotY(i,:) = points_in_boundY(step_size*i,:);
     
 end
 
