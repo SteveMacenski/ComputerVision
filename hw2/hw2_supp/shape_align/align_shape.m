@@ -12,7 +12,7 @@ function [T,im_aligned,error,time_to_run] = align_shape( im1, im2 )
     meanX1 = mean(xIm1);
     meanX2 = mean(xIm2);
     meanY1 = mean(yIm1);
-    meanY2 = mean(yIm2);
+    meanY2 = meanA(yIm2);
 
     % find diff in scale setup
     dist1 = hypot(xIm1-meanX1,yIm1-meanY1);
