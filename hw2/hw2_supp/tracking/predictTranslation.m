@@ -1,4 +1,4 @@
-function [ newX, newY ] = predictTranslation( startX, startY, Ix, Iy, im0, im1 )
+function [ newX, newY ] = predictTranslation( startX, startY, Ix, Iy, im0, im1, oldX, oldY )
 %predictTranslation, for single X,Y positions
 % Will interpolate Ix,Iy,im0,im1 for non-integer locations
 
@@ -6,8 +6,10 @@ function [ newX, newY ] = predictTranslation( startX, startY, Ix, Iy, im0, im1 )
 
   % find local 15x15 window It for current point
   [localX, localY] = meshgrid(startX-7:startX+7, startY-7:startY+7);
+  [localXO, localYO] = meshgrid(oldX-7:oldX+7, oldY-7:oldY+7);
+
   It = interp2(im1,localX, localY, 'linear') - ...
-            interp2(im0,localX, localY, 'linear');
+            interp2(im0,localXO, localYO, 'linear');
 
   % find sums to populate A and b matrices
   sumIx = sum(sum(Ix.*Ix));
@@ -22,7 +24,7 @@ function [ newX, newY ] = predictTranslation( startX, startY, Ix, Iy, im0, im1 )
   b = [-sumIxt; -sumIyt];
   x = A\b;
   u = x(1); v = x(2);
-  
+
   %update guess
   newX = startX + u;
   newY = startY + v;

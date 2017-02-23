@@ -12,8 +12,8 @@ newYs = zeros(num_keypoints,1);
 
 % find gradient of im0
 P = fspecial('sobel');
-Ix = double(imfilter(im0, P)); %[1, 0, -1]
-Iy = double(imfilter(im0, P')); %[1, 0, -1]'
+Ix = double(imfilter(im0, P')); %[1, 0, -1]
+Iy = double(imfilter(im0, P)); %[1, 0, -1]'
 
 %for each keypoint
 for  i = 1:num_keypoints
@@ -34,8 +34,10 @@ for  i = 1:num_keypoints
         localIx = interp2(Ix, localX, localY, 'linear'); %try linear
         localIy = interp2(Iy, localX, localY, 'linear'); %try linear
     
+        oldX = newX;
+        oldY = newY;
         for j = 1:5
-            [newX, newY] = predictTranslation(newX, newY, localIx, localIy, im0, im1);
+            [newX, newY] = predictTranslation(newX, newY, localIx, localIy, im0, im1, oldX, oldY);
         end
         
         % store
