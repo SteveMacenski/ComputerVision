@@ -33,9 +33,9 @@ cross1 = vanishingZuv * KinvTKinv * vanishingYuv'==0; %d1
 cross2 = vanishingYuv * KinvTKinv * vanishingXuv'==0; %d2
 cross3 = vanishingXuv * KinvTKinv * vanishingZuv'==0; %d3
 sln = solve(cross1,cross2,cross3,f,u0,v0);
-f  = double(sln.f(2));
-u0 = double(sln.u0(1));
-v0 = double(sln.v0(1));
+f  = double(sln.f(2))
+u0 = double(sln.u0(1))
+v0 = double(sln.v0(1))
 
 %% 1C
 % find rotation matrix
@@ -50,7 +50,7 @@ K = [f 0 u0; ...
  R(:,3) = K\vanishingZxyz';
  
  % normalize it to norm(R) = 1
-R  = R./norm(R);
+R  = R./norm(R)
 
 %% NOTES TO SELF WITH DATA
 %axis([-350,7500,0,2200]); %to show line with points
@@ -77,7 +77,6 @@ figure(2)
 imagesc(im);
 hold on;
 line([4.9791e+03,-1.0965e+03], [1.2972e+03,1.2078e+03]);
-% p  = polyfit([ 7.1262e+03, -309.7820], [1.5919e+03,1.5750e+03],1);
 axis([-4000,2200,0,2700]);
 %% 1E extra credit
 
