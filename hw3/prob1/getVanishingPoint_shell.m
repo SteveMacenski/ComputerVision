@@ -25,8 +25,11 @@ while 1
 end
 
 %% solve for vanishing point 
-% Insert code here to compute vp (3x1 vector in homogeneous coordinates)
-
+% Insert code here to compute vp in homogeneous coordinates
+vptemp1 = cross(lines(:,1)', lines(:,2)');
+vptemp2 = cross(lines(:,2)', lines(:,3)');
+vptemp3 = cross(lines(:,1)', lines(:,3)');
+vp = (vptemp1+vptemp2+vptemp3)./3;
 
 %% display 
 hold on
