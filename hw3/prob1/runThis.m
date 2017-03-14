@@ -33,9 +33,9 @@ cross1 = vanishingZuv * KinvTKinv * vanishingYuv'==0; %d1
 cross2 = vanishingYuv * KinvTKinv * vanishingXuv'==0; %d2
 cross3 = vanishingXuv * KinvTKinv * vanishingZuv'==0; %d3
 sln = solve(cross1,cross2,cross3,f,u0,v0);
-f  = double(sln.f(2))
-u0 = double(sln.u0(1))
-v0 = double(sln.v0(1))
+f  = double(sln.f(2));
+u0 = double(sln.u0(1));
+v0 = double(sln.v0(1));
 
 %% 1C
 % find rotation matrix
@@ -45,17 +45,15 @@ K = [f 0 u0; ...
      0 f v0; ...
      0 0 1];
  
- R(:,1) = K\vanishingXxyz';
- R(:,2) = K\vanishingYxyz';
- R(:,3) = K\vanishingZxyz';
+ R(:,1) = K\vanishingXuv';
+ R(:,2) = K\vanishingYuv';
+ R(:,3) = K\vanishingZuv';
  
  % normalize it to norm(R) = 1
 R(:,1)  = R(:,1)./norm(R(:,1));
 R(:,2)  = R(:,2)./norm(R(:,2));
-R(:,3)  = R(:,3)./norm(R(:,3)) %TODO wrong!
-norm(R)
-
-
+R(:,3)  = R(:,3)./norm(R(:,3)); %TODO wrong!
+R
 %% 1D
 im = im2double(imread('./CIMG6476.JPG'));
 

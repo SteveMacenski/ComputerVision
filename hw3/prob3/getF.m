@@ -10,9 +10,6 @@ for z = 1:iterations
     % pick 8 random matches
     rand_matches = randi([1,length(matches)],8,1);
     pts_8 = matches(rand_matches,:); % returns 8 points of random index
-                                                        %selected match indices to find F before RANSAC
-                                                        %rand_matches = [107,229,188,104,209,184,126,111]';
-                                                        %pts_8 = matches(rand_matches,:); % returns 8 points of random index
 
     % normalize the match coordinates
         %ref https://www.mathworks.com/matlabcentral/fileexchange/54544-normalise2dpts-pts-/content/normalise2dpts.m

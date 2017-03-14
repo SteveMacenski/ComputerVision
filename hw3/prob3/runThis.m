@@ -37,7 +37,6 @@ plot(c1(outliers_ind(:,1)),r1(outliers_ind(:,1)),'g.');
 
 %% part B
     % use set of matched points to plot epipolar lines of 7 pts with inliers
-    %TODO lines in g and points in r+
 figure(3)
 subplot(1,2,1);
 
