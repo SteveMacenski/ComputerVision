@@ -1,26 +1,27 @@
 % Steve Macenski (c) 2017
 % SLIC (Achanta et al. PAMI 2012) implementation
-clear all; clc;
+clear all; clc; clf;
 
 % reading in image
-im = im2double(imread('./lion.jpg'));
+im = im2double(imread('./house2.jpg'));
 
 %% Part b: produce plots of SLIC with different weights, m
 
-K = 256; % number of cluster centers
-compactness = [10, 25, 40]; %m: weight 10 default for SLIC paper
+K = 100; % number of cluster centers
+compactness = [5, 10, 25, 40, 1000]; %m: weight 10 default for SLIC paper
 
-for i = 1:1%length(compactness)
+for i = 1%:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
+    figure(i+5)
+    imshow(imgVis);
+    title(['Steve Macenski m=' num2str(compactness(i))]);
 end
 
 
 %% Part c: show error map at initialization and at convergence
-
-
+% ran instance and saved images during itervals. 
 
 %% Part d: Show 3 superpixel result with K = [64, 256, 1024]
-
 % K = [64, 256, 1024];
 % timesK = zeros(3,1);
 % m = 25;
