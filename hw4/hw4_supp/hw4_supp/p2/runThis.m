@@ -18,7 +18,7 @@ m_ = -1*ones(NUM_ANNOTATORS,1); %bool 0 or 1 for good annotator
 beta = .3*ones(NUM_ANNOTATORS,1); %Prob of annotator is good
 sigma = .8; % std of image annotation, constant
 mu = .4*ones(NUM_IMAGES,1); % mean of image annotation
-alpha = zeros(NUM_IMAGES,NUM_ANNOTATORS);
+alpha = zeros(NUM_IMAGES,NUM_ANNOTATORS); % alpha matrix
 
 % EM
 for STEP = 1:5
@@ -28,8 +28,8 @@ for STEP = 1:5
         n = image_ids(each);
         m = annotator_ids(each);
         score = annotation_scores(each);
-        alpha(n,m) = ( normpdf(score,mu(n),sigma) * beta(m) )  /  ...
-            (  ((1-beta(m))/SCORE_RANGE) +  normpdf(score,mu(n),sigma) * beta(m)  );
+        alpha(n,m) = ( beta(m) * normpdf(score,mu(n),sigma) )  /  ...
+            (   beta(m) * normpdf(score,mu(n),sigma) + ((1-beta(m))/SCORE_RANGE) );
     end
     
     % M: find mu, sigma, beta
@@ -50,7 +50,6 @@ for STEP = 1:5
     end
     alphasum = sum(sum(alpha));
     sigma = sqrt(sig/alphasum);
-    
     
     for m = 1:NUM_ANNOTATORS
       noter_sum = sum(alpha(:,m));
