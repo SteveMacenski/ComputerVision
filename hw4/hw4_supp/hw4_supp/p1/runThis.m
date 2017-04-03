@@ -12,9 +12,9 @@ compactness = [5, 10, 25, 40, 1000]; %m: weight 10 default for SLIC paper
 
 for i = 1%:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
-    figure(i+5)
-    imshow(imgVis);
-    title(['Steve Macenski m=' num2str(compactness(i))]);
+    %figure(i+5)
+    %imshow(imgVis);
+    %title(['Steve Macenski m=' num2str(compactness(i))]);
 end
 
 

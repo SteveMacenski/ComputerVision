@@ -12,10 +12,11 @@ function [label, time, imgVis] = slic(im, K, m)
 %   - imgVis:  the input image overlaid with the segmentation
 
 tic;
+debugOn = true;
 
 im_gray = double(rgb2gray(im));
 imgVis = im;
-im = rgb2lab(im); %Lab for SLIC 
+im = rgb2lab(im); %Lab colorspace for SLIC 
 
 N = size(im,1)*size(im,2); % # pixels
 S = floor(sqrt(N/K)); % S for window size
@@ -24,8 +25,8 @@ S = floor(sqrt(N/K)); % S for window size
 r1 = floor((size(im,1))/sqrt(K));
 r2 = floor((size(im,2))/sqrt(K));
 K = sqrt(K);
-range1 = r1:r1:size(im,1)-r1;
-range2 = r2:r2:size(im,2)-r2;
+range1 = S:S:size(im,1)-S; %r1::r1
+range2 = S:S:size(im,2)-S; %r2::r2
 
 k=1;
 for j = 1:length(range1)
@@ -35,7 +36,14 @@ for j = 1:length(range1)
     end
 end
 cluster_centers = unique(cluster_centers,'rows'); % kill redundant clusters
-                                                                 
+
+if debugOn==true %initial placement of centers
+    figure(1)
+    imshow(imgVis);
+    hold on;
+    scatter(cluster_centers(:,2),cluster_centers(:,1),'r+');
+end
+
 % Move centers to the lowest gradient in the 3x3 neighborhood of center
 [gradX,gradY] = gradient(im_gray);
 gradMag = gradX.^2 + gradY.^2;
@@ -52,13 +60,18 @@ for i = 1:size(cluster_centers,1)
     cluster_centers(i,5) = im(cluster_centers(i,1),cluster_centers(i,2),3);
 end
 
+if debugOn==true % placement of centers after grad minimization
+    figure(1)
+    scatter(cluster_centers(:,2),cluster_centers(:,1),'b+');
+end
+
 % zeroing out distance and label
 d = 9e99*ones([size(im,1), size(im,2)]);
 label = -1*ones([size(im,1), size(im,2)]);
 
 
 %% segmentation iteration
-for STEP = 1:12
+for STEP = 1:10
     %  For each cluster, find the distance between pixels in [2S 2S] window
     for i = 1:size(cluster_centers,1)
         Sx=S;Sy=S;
@@ -139,18 +152,24 @@ for STEP = 1:12
     end
     error(:,:,STEP) = err;
     
-    if STEP == 1
-        figure(3)
-        imagesc(log(err));
-        title('Error map at initialization')
-    end
+    %if STEP == 1
+    %    figure(3)
+    %    imagesc(log(err));
+    %    title('Error map at initialization')
+    %end
     
     % assign to loop over next iteration
     cluster_centers = cluster_centers_new;
+    
+    if debugOn==true %cluster movement 
+        figure(1)
+        scatter(cluster_centers(:,2),cluster_centers(:,1),'g+');
+        pause(.5)
+    end
 end
 
 %% 
-%join orphanded pixels
+%join orphaned pixels to closest geometric center
 for x = 1:size(im,1)
     for y = 1:size(im,2)
         if label(x,y) < 0
@@ -177,9 +196,16 @@ error(:,:,end) = err;
 
 % make image for viewing with boundaries
 [gradX,gradY] = gradient(label);
-gradMag = gradX.^2 + gradY.^2 > 0;
+gradMag = abs(gradX.^2 + gradY.^2) > 0;
 gradMag = bwmorph(gradMag,'thin');
-imgVis(gradMag)=255;
+imgVis(gradMag)=100;
+
+if debugOn==true
+   figure(6)
+   imshow(imgVis)
+   hold on;
+   scatter(cluster_centers(:,2),cluster_centers(:,1),'g+');
+end
 
 time = toc;
 
