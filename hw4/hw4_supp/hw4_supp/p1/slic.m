@@ -12,7 +12,7 @@ function [label, time, imgVis] = slic(im, K, m)
 %   - imgVis:  the input image overlaid with the segmentation
 
 tic;
-debugOn = false;
+debugOn = true;
 
 im_gray = double(rgb2gray(im));
 imgVis = double(im);
@@ -23,8 +23,8 @@ S = floor(sqrt(N/K)); % S for window size
 
 % make initial cluster centers
 K = sqrt(K);
-range1 = S:S:size(im,1)-S;
-range2 = S:S:size(im,2)-S;
+range1 = S:1.5*S:size(im,1)-S;
+range2 = S:1.5*S:size(im,2)-S;
 
 k=1;
 for i = 1:length(range1)
@@ -166,11 +166,59 @@ for STEP = 1:10
     end
 end
 
+
 %% 
+                        %    figure(13)
+                        %    subplot(1,2,1)
+                        %    imagesc(label);
+                        %
+                        % CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
+                        % for i = 1:size(cluster_centers,1)
+                        %     label_i = (label==i);
+                        %     label_i = bwmorph(label_i,'clean');
+                        %     label_i = bwmorph(label_i,'fill');
+                        %     %label_i = bwmorph(label_i,'close');
+                        %     CC(:,:,i) = i*label_i;
+                        % end
+                        % for i = 1:size(im,1)
+                        %     for j = 1:size(im,2)
+                        %         label(i,j) = sum(CC(i,j,:));
+                        %         if label(i,j) == 0
+                        %             label(i,j) = -1;
+                        %         end
+                        %     end
+                        % end
+% 
+% CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
+% for i = 1:size(cluster_centers,1)
+%     label_i = (label==i);
+%     label_i = bwconncomp(label_i,4);
+%     tempID = label_i.PixelIdxList{1};
+%     [xin,yin] = ind2sub([4,4],tempID);
+%     pts = [xin,yin];
+%     for g = 1:size(xin,1)
+%         CC(pts(i,1),pts(i,2),i) = 1;
+%     end
+%     CC(:,:,i) = i*CC(:,:,i);
+% end
+% for i = 1:size(im,1)
+%     for j = 1:size(im,2)
+%         label(i,j) = sum(CC(i,j,:));
+%         if label(i,j) == 0
+%             label(i,j) = -1;
+%         end
+%     end
+% end
+
+%    figure(13)
+%    subplot(1,2,2)
+%    imagesc(label);
+   
+
 %join orphaned pixels to closest geometric center
 for x = 1:size(im,1)
     for y = 1:size(im,2)
-        if label(x,y) < 0
+        if label(x,y) < 0 || label(x,y) > size(cluster_centers,1)
             dist_min = 9e99;
             for cluster = 1:size(cluster_centers,1)                
                 D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,2) - y)^2;                
@@ -204,13 +252,13 @@ if debugOn==true
    hold on;
    scatter(cluster_centers(:,2),cluster_centers(:,1),'g+');
    figure(12)
-   imagesc(label); hold on; imagesc(label(gradMag));
+   imagesc(label); hold on; imagesc(label);
 end
 
 time = toc;
 
 % show error map
-figure(4); clf;
-imagesc(log(error(:,:,end)));
-title('Error map at Convergence')
+%figure(4); clf;
+%imagesc(log(error(:,:,end)));
+%title('Error map at Convergence')
 end

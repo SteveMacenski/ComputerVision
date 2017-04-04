@@ -3,12 +3,12 @@
 clear all; clc; clf;
 
 % reading in image
-im = im2double(imread('./house2.jpg'));
+im = im2double(imread('./lion.jpg'));
 
 %% Part b: produce plots of SLIC with different weights, m
 
-K = 100; % number of cluster centers
-compactness = [5, 10, 25, 40, 1000]; %m: weight 10 default for SLIC paper
+K = 500; % number of cluster centers
+compactness = [5, 10, 25, 40, 100]; %m: weight 10 default for SLIC paper
 
 for i = 1%:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
