@@ -15,6 +15,7 @@ for i = 1%:length(compactness)
     %figure(i+5)
     %imshow(imgVis);
     %title(['Steve Macenski m=' num2str(compactness(i))]);
+    time
 end
 
 

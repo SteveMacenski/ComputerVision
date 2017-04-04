@@ -12,26 +12,24 @@ function [label, time, imgVis] = slic(im, K, m)
 %   - imgVis:  the input image overlaid with the segmentation
 
 tic;
-debugOn = true;
+debugOn = false;
 
 im_gray = double(rgb2gray(im));
-imgVis = im;
-im = rgb2lab(im); %Lab colorspace for SLIC 
+imgVis = double(im);
+im = double(rgb2lab(im)); %Lab colorspace for SLIC 
 
 N = size(im,1)*size(im,2); % # pixels
 S = floor(sqrt(N/K)); % S for window size
 
 % make initial cluster centers
-r1 = floor((size(im,1))/sqrt(K));
-r2 = floor((size(im,2))/sqrt(K));
 K = sqrt(K);
-range1 = S:S:size(im,1)-S; %r1::r1
-range2 = S:S:size(im,2)-S; %r2::r2
+range1 = S:S:size(im,1)-S;
+range2 = S:S:size(im,2)-S;
 
 k=1;
-for j = 1:length(range1)
-    for i = 1:length(range2)
-        cluster_centers(k,:) = [range1(j), range2(i), im(i,j,1), im(i,j,2), im(i,j,3)];
+for i = 1:length(range1)
+    for j = 1:length(range2)
+        cluster_centers(k,:) = [range1(i), range2(j), im(i,j,1), im(i,j,2), im(i,j,3)];
         k=k+1;
     end
 end
@@ -53,8 +51,8 @@ for i = 1:size(cluster_centers,1)
                   cluster_centers(i,2)-1:cluster_centers(i,2)+1);
     [val,ind] = min(ROI(:));
     [xin,yin] = ind2sub([3,3],ind);
-    cluster_centers(i,1) = round(cluster_centers(i,1) + xin - 2);
-    cluster_centers(i,2) = round(cluster_centers(i,2) + yin - 2);
+    cluster_centers(i,1) = cluster_centers(i,1) + xin - 2;
+    cluster_centers(i,2) = cluster_centers(i,2) + yin - 2;
     cluster_centers(i,3) = im(cluster_centers(i,1),cluster_centers(i,2),1);
     cluster_centers(i,4) = im(cluster_centers(i,1),cluster_centers(i,2),2);
     cluster_centers(i,5) = im(cluster_centers(i,1),cluster_centers(i,2),3);
@@ -82,7 +80,7 @@ for STEP = 1:10
 
         if xBot < 1
             xBot = 1;
-            Sx = cluster_centers(i,1)-1;
+            Sx = cluster_centers(i,1)-1; 
         end
         if yBot < 1
             yBot = 1;
@@ -99,7 +97,7 @@ for STEP = 1:10
         
         for v1 = 1:size(ROI,1)
             for v2 = 1:size(ROI,2)
-                dir1 = v1 + cluster_centers(i,1) - Sx - 1; % coords of ROI pixels
+                dir1 = v1 + cluster_centers(i,1) - Sx - 1;% coords of ROI pixels
                 dir2 = v2 + cluster_centers(i,2) - Sy - 1;
                 
                 ds2 = (cluster_centers(i,1) - dir1)^2 + (cluster_centers(i,1) - dir2)^2;
@@ -133,8 +131,8 @@ for STEP = 1:10
             end
         end
         numpxl = sum(sum(pix));
-        if numpxl < 1
-            numpxl = 1;
+        if numpxl == 0
+            numpxl = 1; %stop nans
         end
         cluster_centers_new(i,:) = [round(posX/numpxl),round(posY/numpxl),L/numpxl,a/numpxl,b/numpxl];
     end
@@ -175,7 +173,7 @@ for x = 1:size(im,1)
         if label(x,y) < 0
             dist_min = 9e99;
             for cluster = 1:size(cluster_centers,1)                
-                D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,1) - y)^2;                
+                D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,2) - y)^2;                
                 if D < dist_min
                     label(x,y) = cluster;
                 end            
@@ -197,7 +195,7 @@ error(:,:,end) = err;
 % make image for viewing with boundaries
 [gradX,gradY] = gradient(label);
 gradMag = abs(gradX.^2 + gradY.^2) > 0;
-gradMag = bwmorph(gradMag,'thin');
+gradMag = bwmorph(gradMag,'thin',inf);
 imgVis(gradMag)=100;
 
 if debugOn==true
@@ -205,6 +203,8 @@ if debugOn==true
    imshow(imgVis)
    hold on;
    scatter(cluster_centers(:,2),cluster_centers(:,1),'g+');
+   figure(12)
+   imagesc(label); hold on; imagesc(label(gradMag));
 end
 
 time = toc;
