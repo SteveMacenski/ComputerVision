@@ -7,14 +7,14 @@ im = im2double(imread('./lion.jpg'));
 
 %% Part b: produce plots of SLIC with different weights, m
 
-K = 500; % number of cluster centers
-compactness = [5, 10, 25, 40, 100]; %m: weight 10 default for SLIC paper
+K = 12; % number of cluster centers
+compactness = [5, 10, 25, 40]; %m: weight 10 default for SLIC paper
 
-for i = 1%:length(compactness)
+for i = 3%:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
-    %figure(i+5)
-    %imshow(imgVis);
-    %title(['Steve Macenski m=' num2str(compactness(i))]);
+    figure(i+5)
+    imshow(imgVis);
+    title(['Steve Macenski m=' num2str(compactness(i))]);
     time
 end
 

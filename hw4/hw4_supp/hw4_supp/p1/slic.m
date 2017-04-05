@@ -1,4 +1,4 @@
-function [label, time, imgVis] = slic(im, K, m)
+function [cIndMap, time, imgVis] = slic(im, K, m)
 
 %% Implementation of Simple Linear Iterative Clustering (SLIC)
 %
@@ -12,7 +12,8 @@ function [label, time, imgVis] = slic(im, K, m)
 %   - imgVis:  the input image overlaid with the segmentation
 
 tic;
-debugOn = true;
+debugOn = false;
+convergance = false;
 
 im_gray = double(rgb2gray(im));
 imgVis = double(im);
@@ -23,13 +24,13 @@ S = floor(sqrt(N/K)); % S for window size
 
 % make initial cluster centers
 K = sqrt(K);
-range1 = S:1.5*S:size(im,1)-S;
-range2 = S:1.5*S:size(im,2)-S;
+range1 = S:1.3*S:size(im,1)-S;
+range2 = S:1.3*S:size(im,2)-S;
 
 k=1;
 for i = 1:length(range1)
     for j = 1:length(range2)
-        cluster_centers(k,:) = [range1(i), range2(j), im(i,j,1), im(i,j,2), im(i,j,3)];
+        cluster_centers(k,:) = [round(range1(i)), round(range2(j)), im(i,j,1), im(i,j,2), im(i,j,3)];
         k=k+1;
     end
 end
@@ -150,11 +151,11 @@ for STEP = 1:10
     end
     error(:,:,STEP) = err;
     
-    %if STEP == 1
-    %    figure(3)
-    %    imagesc(log(err));
-    %    title('Error map at initialization')
-    %end
+    if STEP == 1 && convergance == true
+       figure(3)
+       imagesc(log(err));
+       title('Error map at initialization')
+    end
     
     % assign to loop over next iteration
     cluster_centers = cluster_centers_new;
@@ -168,62 +169,60 @@ end
 
 
 %% 
-                        %    figure(13)
-                        %    subplot(1,2,1)
-                        %    imagesc(label);
-                        %
-                        % CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
-                        % for i = 1:size(cluster_centers,1)
-                        %     label_i = (label==i);
-                        %     label_i = bwmorph(label_i,'clean');
-                        %     label_i = bwmorph(label_i,'fill');
-                        %     %label_i = bwmorph(label_i,'close');
-                        %     CC(:,:,i) = i*label_i;
-                        % end
-                        % for i = 1:size(im,1)
-                        %     for j = 1:size(im,2)
-                        %         label(i,j) = sum(CC(i,j,:));
-                        %         if label(i,j) == 0
-                        %             label(i,j) = -1;
-                        %         end
-                        %     end
-                        % end
-% 
-% CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
-% for i = 1:size(cluster_centers,1)
-%     label_i = (label==i);
-%     label_i = bwconncomp(label_i,4);
-%     tempID = label_i.PixelIdxList{1};
-%     [xin,yin] = ind2sub([4,4],tempID);
-%     pts = [xin,yin];
-%     for g = 1:size(xin,1)
-%         CC(pts(i,1),pts(i,2),i) = 1;
-%     end
-%     CC(:,:,i) = i*CC(:,:,i);
-% end
-% for i = 1:size(im,1)
-%     for j = 1:size(im,2)
-%         label(i,j) = sum(CC(i,j,:));
-%         if label(i,j) == 0
-%             label(i,j) = -1;
-%         end
-%     end
-% end
-
 %    figure(13)
-%    subplot(1,2,2)
+%    subplot(1,2,1)
 %    imagesc(label);
-   
+
+% enforce connected components
+CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
+for i = 1:size(cluster_centers,1)
+    label_i = (label==i);
+    label_i = bwconncomp(label_i,4);
+    tempID = [];
+    for q = 1:size(label_i.PixelIdxList,2)
+        if size(label_i.PixelIdxList{q},1) > size(tempID,1)
+            tempID = label_i.PixelIdxList{q};
+        end
+    end
+    [xin,yin] = ind2sub([size(im,1),size(im,2)],tempID);
+    pts = [xin,yin];
+    for g = 1:size(pts,1)
+        CC(pts(g,1),pts(g,2),i) = i;
+    end
+end
+
+% with connected parts, find new centers
+for i = 1:size(cluster_centers)
+    pix = (label==i);
+    L=0;a=0;b=0;posX=0;posY=0;
+    for x = 1:size(pix,1)
+        for y = 1:size(pix,2)
+            if pix(x,y) > 0
+                L = L + im(x,y,1);
+                a = a + im(x,y,2);
+                b = b + im(x,y,3);
+                posX = posX + x;
+                posY = posY + y;
+            end
+        end
+    end
+    numpxl = sum(sum(pix));
+    if numpxl == 0
+        numpxl = 1; %stop nans
+    end
+    cluster_centers(i,:) = [round(posX/numpxl),round(posY/numpxl),L/numpxl,a/numpxl,b/numpxl];
+end
 
 %join orphaned pixels to closest geometric center
 for x = 1:size(im,1)
     for y = 1:size(im,2)
-        if label(x,y) < 0 || label(x,y) > size(cluster_centers,1)
-            dist_min = 9e99;
-            for cluster = 1:size(cluster_centers,1)                
+        if label(x,y) <= 0 || label(x,y) == 104
+            dist_min = inf;
+            for cluster = 1:size(cluster_centers,1)              
                 D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,2) - y)^2;                
                 if D < dist_min
                     label(x,y) = cluster;
+                    dist_min = D;
                 end            
             end
         end
@@ -241,10 +240,12 @@ end
 error(:,:,end) = err;
 
 % make image for viewing with boundaries
-[gradX,gradY] = gradient(label);
+filter = [-1 1];  
+gradX = imfilter(label,filter );
+gradY = imfilter(label,filter');
 gradMag = abs(gradX.^2 + gradY.^2) > 0;
 gradMag = bwmorph(gradMag,'thin',inf);
-imgVis(gradMag)=100;
+imgVis(gradMag)=255;
 
 if debugOn==true
    figure(6)
@@ -255,10 +256,13 @@ if debugOn==true
    imagesc(label); hold on; imagesc(label);
 end
 
+cIndMap = uint16(label);
 time = toc;
 
 % show error map
-%figure(4); clf;
-%imagesc(log(error(:,:,end)));
-%title('Error map at Convergence')
+if convergance == true
+    figure(4); clf;
+    imagesc(log(error(:,:,end)));
+    title('Error map at Convergence')
+end
 end
