@@ -177,7 +177,7 @@ end
 CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
 for i = 1:size(cluster_centers,1)
     label_i = (label==i);
-    label_i = bwconncomp(label_i,4);
+    label_i = bwconncomp(label_i,8);
     tempID = [];
     for q = 1:size(label_i.PixelIdxList,2)
         if size(label_i.PixelIdxList{q},1) > size(tempID,1)
@@ -188,6 +188,12 @@ for i = 1:size(cluster_centers,1)
     pts = [xin,yin];
     for g = 1:size(pts,1)
         CC(pts(g,1),pts(g,2),i) = i;
+    end
+end
+
+for i = 1:size(im,1)
+    for j = 1:size(im,2)
+        label(i,j) = sum(CC(i,j,:));
     end
 end
 
@@ -218,8 +224,14 @@ for x = 1:size(im,1)
     for y = 1:size(im,2)
         if label(x,y) <= 0 || label(x,y) == 104
             dist_min = inf;
-            for cluster = 1:size(cluster_centers,1)              
-                D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,2) - y)^2;                
+            for cluster = 1:size(cluster_centers,1)   
+                
+                ds2 = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,1) - y)^2;
+                dc2 = (cluster_centers(cluster,3) - im(x,y,1))^2 + ...
+                    (cluster_centers(cluster,4) - im(x,y,2))^2 + ...
+                    (cluster_centers(cluster,5) - im(x,y,3))^2;
+                D = m^2/S^2*ds2 + dc2;
+                 D = (cluster_centers(cluster,1) - x)^2 + (cluster_centers(cluster,2) - y)^2;                
                 if D < dist_min
                     label(x,y) = cluster;
                     dist_min = D;
