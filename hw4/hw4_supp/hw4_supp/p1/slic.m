@@ -167,12 +167,7 @@ for STEP = 1:10
     end
 end
 
-
 %% 
-%    figure(13)
-%    subplot(1,2,1)
-%    imagesc(label);
-
 % enforce connected components
 CC = zeros(size(im,1), size(im,2), size(cluster_centers,1));
 for i = 1:size(cluster_centers,1)

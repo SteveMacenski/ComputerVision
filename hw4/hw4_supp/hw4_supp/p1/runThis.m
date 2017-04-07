@@ -3,14 +3,14 @@
 clear all; clc; clf;
 
 % reading in image
-im = im2double(imread('./lion.jpg'));
+im = im2double(imread('./house2.jpg'));
 
 %% Part b: produce plots of SLIC with different weights, m
 
 K = 500; % number of cluster centers
 compactness = [1, 10, 25, 40]; %m: weight 10 default for SLIC paper
 
-for i = 1%:length(compactness)
+for i = 1:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
     figure(i+5)
     imshow(imgVis);
@@ -35,4 +35,4 @@ for i = 1:length(K)
 end
 
 %% Part e: eval and show perforamce with K varying-> boundary recall, under segmenetation error, and average run time per image in BSD
-
+evalSLIC
