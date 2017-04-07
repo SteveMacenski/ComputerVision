@@ -38,7 +38,7 @@ for STEP = 1
     foreProb = foreProbGmm.pdf(data); % pdf of data from X observations
     backProbGmm = fitgmdist(backGround, 3);
     backProb = backProbGmm.pdf(data);
-    foreProb = reshape(foreProb, size(im,1), size(im,2)); % shape to mask
+    foreProb = reshape(foreProb, size(im,1), size(im,2)); % shape back to mask
     backProb = reshape(backProb, size(im,1), size(im,2));
 
     DataCost(:,:,1) = -log(foreProb ./ backProb);
@@ -51,7 +51,7 @@ for STEP = 1
     [gch, labels] = GraphCut('swap', gch); % why swap not get? 
     gch = GraphCut('close', gch);
     
-    reshape(labels, [size(im, 1)*size(im, 2), 1]); % reshape to data
+    reshape(labels, [size(im, 1)*size(im, 2), 1]); % reshape to fitgmdist/data
 end
 
 % display results: foreground/background P map and final segmentation
