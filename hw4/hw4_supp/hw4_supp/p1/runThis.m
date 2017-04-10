@@ -7,33 +7,32 @@ im = im2double(imread('./house2.jpg'));
 
 %% Part b: produce plots of SLIC with different weights, m
 
-K = 100; % number of cluster centers
-compactness = [5, 10, 25, 40, 1000]; %m: weight 10 default for SLIC paper
+K = 500; % number of cluster centers
+compactness = [1, 10, 25, 40]; %m: weight 10 default for SLIC paper
 
-for i = 1%:length(compactness)
+for i = 1:length(compactness)
     [cIndMap, time, imgVis] = slic(im,K,compactness(i));
-    %figure(i+5)
-    %imshow(imgVis);
-    %title(['Steve Macenski m=' num2str(compactness(i))]);
+    figure(i+5)
+    imshow(imgVis);
+    title(['Steve Macenski m=' num2str(compactness(i))]);
     time
 end
 
 
 %% Part c: show error map at initialization and at convergence
-% ran instance and saved images during itervals. 
+% ran instance with convergence = true 
 
 %% Part d: Show 3 superpixel result with K = [64, 256, 1024]
-% K = [64, 256, 1024];
-% timesK = zeros(3,1);
-% m = 25;
-% for i = 1:length(K)
-%     tic
-%     [cIndMap, time, imgVis] = slic(im,K,compactness);
-%     figure(i);
-%     plot(imgVis);
-%     title(['Steve Macenski Part D K = ' num2str(compactness(i))]);
-%     timesK(i) = toc;
-% end
+K = [256, 512, 1024];
+m = 10;
+timeK = [];
+for i = 1:length(K)
+    [cIndMap, time, imgVis] = slic(im,K(i),m);
+    figure(i+5);
+    imshow(imgVis);
+    title(['Steve Macenski Part D K = ' num2str(K(i))]);
+    timeK(i) = time
+end
 
 %% Part e: eval and show perforamce with K varying-> boundary recall, under segmenetation error, and average run time per image in BSD
-
+evalSLIC
