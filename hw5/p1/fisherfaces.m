@@ -5,13 +5,13 @@ faces_path = './faces/';
 NUM_PEOPLE = 10;
 NUM_IM_PER_PERSON = 64;
 NUM_IM = NUM_PEOPLE*NUM_IM_PER_PERSON;
-C = 10; %31
+C = 31; %31
 
 [im, person, number, subset] = readFaceImages(faces_path);
 im_size = size(im{1,1}); %50x50
 
 % (1) for each training image from subset 1: (im-mean)/std then resize to 2500xNUM_IM
-training_im = im(subset == 1); %| subset == 5
+training_im = im(subset == 1| subset == 5); %| subset == 5
 NUM_TRAINING_IM = size(training_im,2);
 
 X_test = zeros(im_size(1)*im_size(2), NUM_IM);
@@ -24,7 +24,7 @@ for i = 1:NUM_IM
 end
 
 % (2) Seperate the training and testing sets
-X_train = X_test(:,subset==1); %|subset==5
+X_train = X_test(:,subset==1| subset == 5); %|subset==5
 IM_OF_PERSON_TRAINING = size(X_train,2) / NUM_PEOPLE;
 
 % (3) Do FLD 
@@ -49,7 +49,7 @@ S_b = zeros(size(X_train,1),size(X_train,1));
 
 for i = 1:NUM_PEOPLE
     X_Train_person = X_train(:  ,  (i-1)*IM_OF_PERSON_TRAINING + 1  :  i*IM_OF_PERSON_TRAINING);
-    for j=1:m
+    for j=1:IM_OF_PERSON_TRAINING
         S_i(:,:,i) = S_i(:,:,i) + (X_Train_person(:,j)-Mu(i)) * (X_Train_person(:,j)-Mu(i))';
     end
 end
@@ -88,7 +88,7 @@ for i = 1:NUM_IM
         dist = abs(norm(X_test(:,i) - X_train(:,j)));
         if dist < dist_min
             dist_min = dist;
-            training_order = find(subset == 1); %|subset==5
+            training_order = find(subset == 1| subset == 5); %|subset==5
             matches(i,2) = person(training_order(j)); 
         end
     end

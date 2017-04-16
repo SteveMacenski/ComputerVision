@@ -5,14 +5,14 @@ faces_path = './faces/';
 NUM_PEOPLE = 10;
 NUM_IM_PER_PERSON = 64;
 NUM_IM = NUM_PEOPLE*NUM_IM_PER_PERSON;
-im_size = size(im{1,1}); %50x50
 
 [im, person, number, subset] = readFaceImages(faces_path);
+im_size = size(im{1,1}); %50x50
 
 %% Eigen-Faces
 
 % (1) for each training image from subset 1: (im-mean)/std then resize to 2500xNUM_IM
-training_im = im(subset == 1| subset == 5 );
+training_im = im(subset == 1 | subset == 5 ); %| subset == 5
 NUM_TRAINING_IM = size(training_im,2);
 
 X_train = zeros(im_size(1)*im_size(2), NUM_TRAINING_IM);
@@ -27,7 +27,7 @@ mu = mean(X_train,2); %mean face
 X_train = X_train - repmat(mu, [1, NUM_TRAINING_IM]);
 
 % (2) Perform PCA, retain 9,30 principal components of training
-largest_eig_keep = 9;
+largest_eig_keep = 30;
 [U,Lambda] = eig(X_train'*X_train);
 U = fliplr(U);                            % reorder highest values first
 V = X_train*U;                            % project
@@ -54,7 +54,7 @@ for i = 1:NUM_IM
 end
 X_test = X_test - repmat(mu, [1, NUM_IM]);
 X_test = V'*X_test;
-X_train = X_test(:,subset == 1 | subset == 5);
+X_train = X_test(:,subset == 1 | subset == 5); %| subset == 5
 
 % (4) Classify by nearest neighbor L2 norm for subsets 1-5
 matches = zeros(NUM_IM,2);
@@ -65,7 +65,7 @@ for i = 1:NUM_IM
         dist = abs(norm(X_test(:,i) - X_train(:,j)));
         if dist < dist_min
             dist_min = dist;
-            training_order = find(subset == 1 | subset == 5 );%  | subset == 5 
+            training_order = find(subset == 1 | subset == 5);%  | subset == 5 
             matches(i,2) = person(training_order(j)); 
         end
     end
